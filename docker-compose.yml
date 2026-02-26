@@ -29,6 +29,8 @@ services:
       - db
     networks:
       - red_visitantes
+    command: >
+      bash -c "docker-php-ext-install pdo_mysql && apache2-foreground"
 
   python:
     image: python:3.9-slim
@@ -44,8 +46,6 @@ services:
       - db
     networks:
       - red_visitantes
-    command: >
-      bash -c "docker-php-ext-install pdo_mysql && apache2-foreground"
 
 volumes:
   mysql_data:
