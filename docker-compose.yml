@@ -35,17 +35,24 @@ services:
   python:
     image: python:3.9-slim
     container_name: visitantes_python
+    environment:
+      DB_HOST: ${DB_HOST}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - ./backend:/app
       - reportes_compartidos:/app/reportes
     working_dir: /app
     command: >
       sh -c "pip install pymysql cryptography &&
-             python script.py"
+            python script.py"
     depends_on:
       - db
     networks:
       - red_visitantes
+
+
 
 volumes:
   mysql_data:
