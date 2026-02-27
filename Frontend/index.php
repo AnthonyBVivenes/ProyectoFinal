@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-# Obtener datos Landing Page (opcional - si tienes tabla estudiante)
+
 try {
     $sqlEstudiante = "SELECT * FROM estudiante LIMIT 1";
     $stmtEstudiante = $pdo->prepare($sqlEstudiante);
