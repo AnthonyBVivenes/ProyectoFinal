@@ -171,7 +171,7 @@ try {
                     <?php endif; ?>
                     <div class="info-text">
                         <h2><?php echo htmlspecialchars($estudiante['nombre'] ?? 'Estudiante'); ?></h2>
-                        <p><?php echo htmlspecialchars($estudiante['bio'] ?? 'Estudiante de desarrollo web con experiencia en PHP, PostgreSQL y Docker.'); ?></p>
+                        <p><?php echo htmlspecialchars($estudiante['bio'] ?? 'Estudiante de desarrollo web con experiencia en PHP, MySQL y Docker.'); ?></p>
                         <?php if (!empty($estudiante['habilidades'])): ?>
                             <div class="habilidades">
                                 <h3>Habilidades:</h3>
