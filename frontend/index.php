@@ -134,6 +134,12 @@ try {
     $visitantes = [];
     $errorConsulta = $e->getMessage();
 }
+
+$reportePath = __DIR__ . '/reportes/reporte.txt';
+$reporteContenido = null;
+if (file_exists($reportePath) && is_readable($reportePath)) {
+    $reporteContenido = file_get_contents($reportePath);
+}
 ?>
 
 
@@ -197,6 +203,15 @@ try {
                         <p>Información del estudiante no disponible(En desarrollo).</p>
                     </div>
                 </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="report-section">
+            <h2>Reporte</h2>
+            <?php if ($reporteContenido): ?>
+                <pre class="report-content"><?php echo htmlspecialchars($reporteContenido); ?></pre>
+            <?php else: ?>
+                <p class="report-empty">No hay reporte aun</p>
             <?php endif; ?>
         </div>
 
