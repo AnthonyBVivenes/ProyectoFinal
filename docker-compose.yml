@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: visitantes_db
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - red_visitantes
+
+  web:
+    image: php:8.2-apache
+    container_name: visitantes_web
+    environment:
+      DB_HOST: db
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_PORT: 3306
+    volumes:
+      - ./frontend:/var/www/html
+      - reportes_compartidos:/var/www/html/reportes
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - red_visitantes
+    command: >
+      bash -c "docker-php-ext-install pdo_mysql && apache2-foreground"
+
+  python:
+    image: python:3.9-slim
+    container_name: visitantes_python
+    environment:
+      DB_HOST: ${DB_HOST}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - ./backend:/app
+      - reportes_compartidos:/app/reportes
+    working_dir: /app
+    command: >
+      sh -c "pip install pymysql cryptography &&
+            python script.py"
+    depends_on:
+      - db
+    networks:
+      - red_visitantes
+
+
+
+volumes:
+  mysql_data:
+  reportes_compartidos:
+
+networks:
+  red_visitantes:
