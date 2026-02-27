@@ -1,14 +1,21 @@
-<?php 
+<?php
 
-$host = getenv('DB_HOST') ;
-$db   = getenv('DB_NAME') ;
-$user = getenv('DB_USER') ;
+$host = getenv('DB_HOST');
+$db   = getenv('DB_NAME');
+$user = getenv('DB_USER');
 $pass = getenv('DB_PASSWORD');
 $port = getenv('DB_PORT');
 
+
+
+
+
 try {
-    $dsn = "pgsql:host=$host;port=$port;dbname=$db;";
-    $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+    $pdo = new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
 } catch (PDOException $e) {
     die("<h3>Error de conexión: " . htmlspecialchars($e->getMessage()) . "</h3>");
 }
@@ -25,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             try {
                 $sql = "INSERT INTO visitantes (nombre_visitante, motivo_visita, fecha_ingreso, salida_registrada) 
-                        VALUES (:nombre, :motivo, NOW(), false)";
+                        VALUES (:nombre, :motivo, NOW(), FALSE)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                     ':nombre' => $_POST['nombre_visitante'],
@@ -99,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $sql = "SELECT * FROM visitantes WHERE id = :id";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([':id' => $_POST['id']]);
-                $visitante = $stmt->fetch(PDO::FETCH_ASSOC);
+                $visitante = $stmt->fetch();
                 echo json_encode(['success' => true, 'data' => $visitante]);
             } catch (PDOException $e) {
                 echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
@@ -108,12 +115,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-#obtener datos Landing Page
+# Obtener datos Landing Page (opcional - si tienes tabla estudiante)
 try {
     $sqlEstudiante = "SELECT * FROM estudiante LIMIT 1";
     $stmtEstudiante = $pdo->prepare($sqlEstudiante);
     $stmtEstudiante->execute();
-    $estudiante = $stmtEstudiante->fetch(PDO::FETCH_ASSOC);
+    $estudiante = $stmtEstudiante->fetch();
 } catch (PDOException $e) {
     $estudiante = null;
 }
@@ -122,7 +129,7 @@ try {
     $sql = "SELECT * FROM visitantes ORDER BY fecha_ingreso DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
-    $visitantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $visitantes = $stmt->fetchAll();
 } catch (PDOException $e) {
     $visitantes = [];
     $errorConsulta = $e->getMessage();
@@ -140,14 +147,14 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Visitantes al Campus</title>
 
-    <link href="style.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏛️ Control de Visitantes al Campus</h1>
+            <h1>Control de Visitantes al Campus</h1>
             <p>Sistema de Registro y Gestión de Seguridad</p>
         </div>
 
@@ -207,7 +214,7 @@ try {
                     <textarea id="motivo_visita" name="motivo_visita" required
                         placeholder="Describa el motivo de la visita"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">➕ Registrar Visitante</button>
+                <button type="submit" class="btn btn-primary"> Registrar Visitante</button>
             </form>
         </div>
 
@@ -243,18 +250,18 @@ try {
                                 <td><?php echo htmlspecialchars($visitante['fecha_ingreso']); ?></td>
                                 <td>
                                     <span class="badge <?php echo $visitante['salida_registrada'] ? 'badge-success' : 'badge-danger'; ?>">
-                                        <?php echo $visitante['salida_registrada'] ? '✅ Salida Registrada' : '⏳ En Campus'; ?>
+                                        <?php echo $visitante['salida_registrada'] ? 'Salida Registrada' : 'En Campus'; ?>
                                     </span>
                                 </td>
                                 <td class="actions-cell">
                                     <button onclick="cambiarEstado(<?php echo $visitante['id']; ?>)"
                                         class="btn btn-info btn-sm">
-                                        <?php echo $visitante['salida_registrada'] ? '↩️ Marcar Entrada' : '✅ Registrar Salida'; ?>
+                                        <?php echo $visitante['salida_registrada'] ? 'Marcar Entrada' : 'Registrar Salida'; ?>
                                     </button>
                                     <button onclick="editarVisitante(<?php echo $visitante['id']; ?>)"
-                                        class="btn btn-warning btn-sm">✏️ Editar</button>
+                                        class="btn btn-warning btn-sm">Editar</button>
                                     <button onclick="eliminarVisitante(<?php echo $visitante['id']; ?>)"
-                                        class="btn btn-danger btn-sm">🗑️ Eliminar</button>
+                                        class="btn btn-danger btn-sm">Eliminar</button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -268,7 +275,7 @@ try {
     <div id="modal-editar" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModal()">&times;</span>
-            <h2>✏️ Editar Visitante</h2>
+            <h2>Editar Visitante</h2>
             <form id="form-editar">
                 <input type="hidden" id="edit-id" name="id">
                 <div class="form-group">
@@ -279,8 +286,8 @@ try {
                     <label for="edit-motivo">Motivo de la Visita *</label>
                     <textarea id="edit-motivo" name="motivo_visita" required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
-                <button type="button" onclick="cerrarModal()" class="btn btn-danger">❌ Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <button type="button" onclick="cerrarModal()" class="btn btn-danger">Cancelar</button>
             </form>
         </div>
     </div>
