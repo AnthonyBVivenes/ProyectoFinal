@@ -20,6 +20,12 @@ services:
   web:
     image: php:8.2-apache
     container_name: visitantes_web
+    environment:
+      DB_HOST: db
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_PORT: 3306
     volumes:
       - ./frontend:/var/www/html
       - reportes_compartidos:/var/www/html/reportes
