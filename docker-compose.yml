@@ -40,7 +40,7 @@ services:
       - reportes_compartidos:/app/reportes
     working_dir: /app
     command: >
-      sh -c "pip install pymysql &&
+      sh -c "pip install pymysql cryptography &&
              python script.py"
     depends_on:
       - db
