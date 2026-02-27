@@ -1,9 +1,10 @@
-<?php
-$host = 'db';
-$db   = 'proyecto';
-$user = 'postgres';
-$pass = 'postgres';
-$port = '5432';
+<?php 
+
+$host = getenv('DB_HOST') ;
+$db   = getenv('DB_NAME') ;
+$user = getenv('DB_USER') ;
+$pass = getenv('DB_PASSWORD');
+$port = getenv('DB_PORT');
 
 try {
     $dsn = "pgsql:host=$host;port=$port;dbname=$db;";
@@ -127,6 +128,9 @@ try {
     $errorConsulta = $e->getMessage();
 }
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="es">
