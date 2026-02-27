@@ -17,7 +17,7 @@ INSERT INTO visitantes (nombre_visitante, motivo_visita) VALUES
 ('Anthony Vivenes', 'Mantenimiento de equipos'),
 ('Lulú Martinez', 'Visita a biblioteca'),
 ('Pedro Sánchez', 'Entrevista de trabajo');
------------------------------------------------------------
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 
@@ -53,6 +53,6 @@ END$$
 
 DELIMITER ;
 
------------------------------------------------
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 -- agregaré más procedimiento cuando cumpla las exigencias básicas
