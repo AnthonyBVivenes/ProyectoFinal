@@ -194,7 +194,7 @@ try {
                     </div>
                     <div class="info-text">
                         <h2>Estudiante:</h2>
-                        <p>Información del estudiante no disponible. Configurar la tabla 'estudiante' en la base de datos.</p>
+                        <p>Información del estudiante no disponible(En desarrollo).</p>
                     </div>
                 </div>
             <?php endif; ?>
