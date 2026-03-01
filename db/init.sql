@@ -9,9 +9,10 @@ CREATE TABLE IF NOT EXISTS visitantes (
 
 CREATE TABLE IF NOT EXISTS estudiante (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    id_Visitante INT UNIQUE, 
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
-    fecha_nacimiento DATE NOT NULL,
+    fecha_nacimiento DATE,
     email VARCHAR(100) UNIQUE,
     carrera VARCHAR(100),
     semestre INT,
@@ -20,7 +21,8 @@ CREATE TABLE IF NOT EXISTS estudiante (
     habilidades TEXT,
     github_url VARCHAR(255),
     linkedin_url VARCHAR(255),
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_Visitante) REFERENCES visitantes(id) ON DELETE CASCADE
 );
 
 -- Aquí creamos datosd e prueba así no tenemos la bdd vacía y nos sirve
@@ -32,10 +34,11 @@ INSERT INTO visitantes (nombre_visitante, motivo_visita) VALUES
 ('Lulú Martinez', 'Visita a biblioteca'),
 ('Pedro Sánchez', 'Entrevista de trabajo');
 
-INSERT INTO estudiante (nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
-('Anthony', 'Vivenes', '2000-01-15', 'anthony.vivenes@ejemplo.com', 'Ingeniería en Computación', 8, 
+INSERT INTO estudiante (id_Visitante, nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
+(3, 'Anthony', 'Vivenes', '2000-01-15', 'anthony.vivenes@ejemplo.com', 'Ingeniería en Computación', 8, 
 'Estudiante de Ingeniería en Computación apasionado por el desarrollo backend y la infraestructura en Docker.',
 'Python, Docker, MySQL, PHP, Git');
+
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
