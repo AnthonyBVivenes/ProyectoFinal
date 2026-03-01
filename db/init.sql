@@ -7,7 +7,21 @@ CREATE TABLE IF NOT EXISTS visitantes (
     salida_registrada BOOLEAN DEFAULT FALSE
 );
 
-
+CREATE TABLE IF NOT EXISTS estudiante (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    carrera VARCHAR(100),
+    semestre INT,
+    foto_perfil VARCHAR(255),
+    biografia TEXT,
+    habilidades TEXT,
+    github_url VARCHAR(255),
+    linkedin_url VARCHAR(255),
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Aquí creamos datosd e prueba así no tenemos la bdd vacía y nos sirve
 --  para testear inicialmente
@@ -17,6 +31,11 @@ INSERT INTO visitantes (nombre_visitante, motivo_visita) VALUES
 ('Anthony Vivenes', 'Mantenimiento de equipos'),
 ('Lulú Martinez', 'Visita a biblioteca'),
 ('Pedro Sánchez', 'Entrevista de trabajo');
+
+INSERT INTO estudiante (nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
+('Anthony', 'Vivenes', '2000-01-15', 'anthony.vivenes@ejemplo.com', 'Ingeniería en Computación', 8, 
+'Estudiante de Ingeniería en Computación apasionado por el desarrollo backend y la infraestructura en Docker.',
+'Python, Docker, MySQL, PHP, Git');
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
