@@ -182,8 +182,145 @@ function cerrarModal() {
 }
 
 window.onclick = function (event) {
-  const modal = document.getElementById("modal-editar");
-  if (event.target == modal) {
+  const modalEditar = document.getElementById("modal-editar");
+  const modalHistorial = document.getElementById("modal-historial");
+  if (event.target == modalEditar) {
     cerrarModal();
   }
+  if (event.target == modalHistorial) {
+    cerrarModalHistorial();
+  }
 };
+
+// Abrir modal de Historial
+function abrirHistorial() {
+  document.getElementById("modal-historial").style.display = "block";
+  // Resetear a vista de lista
+  volverALista();
+}
+
+// Cerrar modal de Historial
+function cerrarModalHistorial() {
+  document.getElementById("modal-historial").style.display = "none";
+  volverALista();
+}
+
+// Array para almacenar los datos de estudiantes (se llenará desde PHP)
+let estudiantesData = [];
+
+// Función para cargar datos de estudiantes desde el HTML
+function cargarEstudiantesData() {
+  const container = document.getElementById('lista-estudiantes');
+  if (container && container.dataset.estudiantes) {
+    estudiantesData = JSON.parse(container.dataset.estudiantes);
+  }
+}
+
+// Mostrar detalle de un estudiante
+function mostrarDetalleEstudiante(index) {
+  // Obtener datos del estudiante desde el data attribute del contenedor
+  const listaContainer = document.getElementById('lista-estudiantes');
+  const estudiantes = JSON.parse(listaContainer.dataset.estudiantes || '[]');
+  const est = estudiantes[index];
+  
+  if (!est) return;
+  
+  // Construir HTML del detalle
+  const detalleHTML = construirDetalleHTML(est);
+  document.getElementById('detalle-contenido').innerHTML = detalleHTML;
+  
+  // Ocultar lista, mostrar detalle
+  document.getElementById('lista-estudiantes').style.display = 'none';
+  document.getElementById('detalle-estudiante').style.display = 'block';
+}
+
+// Construir HTML del detalle del estudiante
+function construirDetalleHTML(est) {
+  const nombreCompleto = (est.nombre || '') + ' ' + (est.apellido || '');
+  const foto = est.foto_perfil || '';
+  const biografia = est.biografia || est.bio || 'Biografía no disponible';
+  const habilidades = est.habilidades ? est.habilidades.split(',').map(h => h.trim()) : [];
+  
+  let html = `
+    <div class="historial-container">
+      <div class="historial-header">
+        ${foto ? `<img src="${foto}" alt="Foto" class="historial-foto">` : `<div class="historial-foto historial-foto-placeholder">👤</div>`}
+        <div class="historial-titulo">
+          <h3>${nombreCompleto}</h3>
+        </div>
+      </div>
+      
+      <div class="historial-datos">
+        <div class="dato-card">
+          <span class="dato-label">📄 Biografía</span>
+          <p class="dato-value">${biografia}</p>
+        </div>
+        
+        ${est.email ? `
+        <div class="dato-card">
+          <span class="dato-label">📧 Email</span>
+          <p class="dato-value">${est.email}</p>
+        </div>
+        ` : ''}
+        
+        ${est.carrera ? `
+        <div class="dato-card">
+          <span class="dato-label">📚 Carrera</span>
+          <p class="dato-value">${est.carrera}</p>
+        </div>
+        ` : ''}
+        
+        ${est.semestre ? `
+        <div class="dato-card">
+          <span class="dato-label">📅 Semestre</span>
+          <p class="dato-value">${est.semestre}</p>
+        </div>
+        ` : ''}
+        
+        ${est.fecha_nacimiento ? `
+        <div class="dato-card">
+          <span class="dato-label">🎂 Fecha de Nacimiento</span>
+          <p class="dato-value">${est.fecha_nacimiento}</p>
+        </div>
+        ` : ''}
+        
+        ${est.github_url ? `
+        <div class="dato-card">
+          <span class="dato-label">🐙 GitHub</span>
+          <p class="dato-value"><a href="${est.github_url}" target="_blank" style="color: #667eea;">${est.github_url}</a></p>
+        </div>
+        ` : ''}
+        
+        ${est.linkedin_url ? `
+        <div class="dato-card">
+          <span class="dato-label">💼 LinkedIn</span>
+          <p class="dato-value"><a href="${est.linkedin_url}" target="_blank" style="color: #667eea;">${est.linkedin_url}</a></p>
+        </div>
+        ` : ''}
+      </div>
+      
+      ${habilidades.length > 0 ? `
+        <div class="historial-habilidades">
+          <h4>🛠️ Habilidades</h4>
+          <div class="habilidades-list">
+            ${habilidades.map(h => `<span class="habilidad-tag">${h}</span>`).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  
+  return html;
+}
+
+// Volver a la lista de estudiantes
+function volverALista() {
+  document.getElementById('lista-estudiantes').style.display = 'block';
+  document.getElementById('detalle-estudiante').style.display = 'none';
+}
+
+// Cargar datos al iniciar
+document.addEventListener('DOMContentLoaded', function() {
+  // Agregar data attribute con los estudiantes al contenedor
+  // Esto se hace desde PHP
+});

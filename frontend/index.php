@@ -117,11 +117,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 
 try {
-    $sqlEstudiante = "SELECT * FROM estudiante LIMIT 1";
+    $sqlEstudiante = "SELECT * FROM estudiante ORDER BY fecha_registro DESC";
     $stmtEstudiante = $pdo->prepare($sqlEstudiante);
     $stmtEstudiante->execute();
-    $estudiante = $stmtEstudiante->fetch();
+    $estudiantes = $stmtEstudiante->fetchAll();
+    $estudiante = $estudiantes[0] ?? null; // Mantener primer estudiante para la landing section
 } catch (PDOException $e) {
+    $estudiantes = [];
     $estudiante = null;
 }
 
@@ -207,7 +209,10 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
         </div>
 
         <div class="report-section">
-            <h2>Reporte</h2>
+            <div class="report-header">
+                <h2>Reporte</h2>
+                <button onclick="abrirHistorial()" class="btn btn-primary btn-historial">📋 Historial</button>
+            </div>
             <?php if ($reporteContenido): ?>
                 <pre class="report-content"><?php echo htmlspecialchars($reporteContenido); ?></pre>
             <?php else: ?>
@@ -304,6 +309,47 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                 <button type="button" onclick="cerrarModal()" class="btn btn-danger">Cancelar</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal para Historial -->
+    <div id="modal-historial" class="modal">
+        <div class="modal-content modal-historial-content">
+            <span class="close" onclick="cerrarModalHistorial()">&times;</span>
+            <h2>📋 Historial de Estudiantes</h2>
+            
+            <!-- Vista de Lista de Estudiantes -->
+            <div id="lista-estudiantes" class="lista-estudiantes-container" data-estudiantes='<?php echo htmlspecialchars(json_encode($estudiantes), ENT_QUOTES, 'UTF-8'); ?>'>
+                <?php if (!empty($estudiantes)): ?>
+                    <div class="estudiantes-grid">
+                        <?php foreach ($estudiantes as $index => $est): ?>
+                            <div class="estudiante-card" onclick="mostrarDetalleEstudiante(<?php echo $index; ?>)">
+                                <?php if (!empty($est['foto_perfil'])): ?>
+                                    <img src="<?php echo htmlspecialchars($est['foto_perfil']); ?>" alt="Foto" class="estudiante-card-foto">
+                                <?php else: ?>
+                                    <div class="estudiante-card-foto estudiante-card-placeholder">👤</div>
+                                <?php endif; ?>
+                                <div class="estudiante-card-info">
+                                    <h4><?php echo htmlspecialchars(($est['nombre'] ?? '') . ' ' . ($est['apellido'] ?? '')); ?></h4>
+                                    <p class="estudiante-card-carrera"><?php echo htmlspecialchars($est['carrera'] ?? 'Sin carrera'); ?></p>
+                                    <span class="estudiante-card-semestre">Semestre <?php echo htmlspecialchars($est['semestre'] ?? 'N/A'); ?></span>
+                                </div>
+                                <div class="estudiante-card-arrow">→</div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="historial-empty">
+                        <p>No hay estudiantes registrados.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Vista de Detalle de Estudiante -->
+            <div id="detalle-estudiante" class="detalle-estudiante-container" style="display: none;">
+                <button onclick="volverALista()" class="btn-volver">← Volver a la lista</button>
+                <div id="detalle-contenido"></div>
+            </div>
         </div>
     </div>
 
