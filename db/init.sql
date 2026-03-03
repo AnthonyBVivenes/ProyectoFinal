@@ -34,10 +34,34 @@ INSERT INTO visitantes (nombre_visitante, motivo_visita) VALUES
 ('Lulú Martinez', 'Visita a biblioteca'),
 ('Pedro Sánchez', 'Entrevista de trabajo');
 
+
+
+
+-- Insert para preubas
+INSERT INTO estudiante (id_Visitante, nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
+(1, 'Gabriel', 'Pérez', '1998-05-20', 'gabriel.perez@ejemplo.com', 'Educación', 10, 
+'Interesado en metodologías de aprendizaje activo y pedagogía moderna.',
+'Planificación, Oratoria, Liderazgo');
+
+INSERT INTO estudiante (id_Visitante, nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
+(2, 'Nicolas', 'Moros', '2001-11-02', 'nicolas.moros@ejemplo.com', 'Administración', 4, 
+'Estudiante enfocado en gestión de procesos y talento humano.',
+'Excel avanzado, Contabilidad, Análisis de riesgos');
+
 INSERT INTO estudiante (id_Visitante, nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
 (3, 'Anthony', 'Vivenes', '2000-01-15', 'anthony.vivenes@ejemplo.com', 'Ingeniería en Computación', 8, 
 'Estudiante de Ingeniería en Computación apasionado por el desarrollo backend y la infraestructura en Docker.',
 'Python, Docker, MySQL, PHP, Git');
+
+INSERT INTO estudiante (id_Visitante, nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
+(4, 'Lulú', 'Martinez', '2002-03-30', 'lulu.mtz@ejemplo.com', 'Letras', 6, 
+'Amante de la literatura clásica y la investigación bibliográfica.',
+'Redacción creativa, Ortografía, Archivología');
+
+INSERT INTO estudiante (id_Visitante, nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
+(5, 'Pedro', 'Sánchez', '1995-08-12', 'pedro.sanchez@ejemplo.com', 'Psicología Industrial', 9, 
+'Especializándose en selección de personal y comportamiento organizacional.',
+'Entrevistas, SPSS, Gestión de grupos');
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
