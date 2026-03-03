@@ -267,7 +267,7 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
         <div class="report-section">
             <div class="report-header">
                 <h2>Reporte</h2>
-                <button onclick="abrirHistorial()" class="btn btn-primary btn-historial">📋 Historial</button>
+                <button onclick="abrirHistorial()" class="btn btn-primary btn-historial">Historial</button>
             </div>
             <?php if ($reporteContenido): ?>
                 <pre class="report-content"><?php echo htmlspecialchars($reporteContenido); ?></pre>

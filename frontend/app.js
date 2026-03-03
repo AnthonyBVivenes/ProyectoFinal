@@ -244,7 +244,7 @@ function construirDetalleHTML(est) {
   let html = `
     <div class="historial-container">
       <div class="historial-header">
-        ${foto ? `<img src="${foto}" alt="Foto" class="historial-foto">` : `<div class="historial-foto historial-foto-placeholder">👤</div>`}
+        ${foto ? `<img src="${foto}" alt="Foto" class="historial-foto">` : `<div class="historial-foto historial-foto-placeholder">FOTO</div>`}
         <div class="historial-titulo">
           <h3>${nombreCompleto}</h3>
         </div>
@@ -311,7 +311,7 @@ function construirDetalleHTML(est) {
 
       <div class="acciones-estudiante">
         <button onclick="eliminarEstudiante(${est.id}, '${nombreCompleto.replace(/'/g, "\\'")}')" class="btn-eliminar-estudiante">
-          🗑️ Eliminar Estudiante
+         Eliminar Estudiante
         </button>
       </div>
     </div>
