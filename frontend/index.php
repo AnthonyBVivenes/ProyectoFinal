@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
 
             try {
+                // Insertar visitante
                 $sql = "INSERT INTO visitantes (nombre_visitante, motivo_visita, fecha_ingreso, salida_registrada) 
                         VALUES (:nombre, :motivo, NOW(), FALSE)";
                 $stmt = $pdo->prepare($sql);
@@ -40,7 +41,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     ':nombre' => $_POST['nombre_visitante'],
                     ':motivo' => $_POST['motivo_visita']
                 ]);
-                echo json_encode(['success' => true, 'message' => 'Visitante registrado correctamente']);
+                
+                // Obtener el ID del visitante recién creado
+                $idVisitante = $pdo->lastInsertId();
+                
+                // Separar nombre completo en nombre y apellido
+                $nombreCompleto = $_POST['nombre_visitante'];
+                $partes = explode(' ', $nombreCompleto, 2);
+                $nombre = $partes[0];
+                $apellido = $partes[1] ?? '';
+                
+                // Insertar estudiante vinculado
+                $sqlEst = "INSERT INTO estudiante (id_Visitante, nombre, apellido) 
+                           VALUES (:id_visitante, :nombre, :apellido)";
+                $stmtEst = $pdo->prepare($sqlEst);
+                $stmtEst->execute([
+                    ':id_visitante' => $idVisitante,
+                    ':nombre' => $nombre,
+                    ':apellido' => $apellido
+                ]);
+                
+                echo json_encode(['success' => true, 'message' => 'Visitante y estudiante registrados correctamente']);
             } catch (PDOException $e) {
                 echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
             }
@@ -230,7 +251,7 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
                             alt="Foto del estudiante" class="foto-estudiante">
                     <?php else: ?>
                         <div class="foto-estudiante" style="background: #667eea; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
-                            👤
+                            Foto
                         </div>
                     <?php endif; ?>
                     <div class="info-text">
@@ -254,7 +275,7 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
             <?php else: ?>
                 <div class="estudiante-info">
                     <div class="foto-estudiante" style="background: #667eea; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
-                        FOTO
+                        Foto
                     </div>
                     <div class="info-text">
                         <h2>Estudiante:</h2>
@@ -383,7 +404,7 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
                                 <?php if (!empty($est['foto_perfil'])): ?>
                                     <img src="<?php echo htmlspecialchars($est['foto_perfil']); ?>" alt="Foto" class="estudiante-card-foto">
                                 <?php else: ?>
-                                    <div class="estudiante-card-foto estudiante-card-placeholder">👤</div>
+                                    <div class="estudiante-card-foto estudiante-card-placeholder">foto</div>
                                 <?php endif; ?>
                                 <div class="estudiante-card-info">
                                     <h4><?php echo htmlspecialchars(($est['nombre'] ?? '') . ' ' . ($est['apellido'] ?? '')); ?></h4>
