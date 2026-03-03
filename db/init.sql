@@ -1,29 +1,29 @@
 -- Creamos la tabla si no existe en la base de datos
 CREATE TABLE IF NOT EXISTS visitantes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_visitante VARCHAR(100) NOT NULL,
-    motivo_visita TEXT NOT NULL,
+    nombre_visitante VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    motivo_visita TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     fecha_ingreso TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     salida_registrada BOOLEAN DEFAULT FALSE
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS estudiante (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_Visitante INT UNIQUE, 
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    apellido VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     fecha_nacimiento DATE,
-    email VARCHAR(100) UNIQUE,
-    carrera VARCHAR(100),
+    email VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE,
+    carrera VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     semestre INT,
-    foto_perfil VARCHAR(255),
-    biografia TEXT,
-    habilidades TEXT,
-    github_url VARCHAR(255),
-    linkedin_url VARCHAR(255),
+    foto_perfil VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    biografia TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    habilidades TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    github_url VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    linkedin_url VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_Visitante) REFERENCES visitantes(id) ON DELETE CASCADE
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Aquí creamos datosd e prueba así no tenemos la bdd vacía y nos sirve
 --  para testear inicialmente
@@ -37,7 +37,7 @@ INSERT INTO visitantes (nombre_visitante, motivo_visita) VALUES
 
 
 
--- Insert para preubas
+-- Insert para pruebas
 INSERT INTO estudiante (id_Visitante, nombre, apellido, fecha_nacimiento, email, carrera, semestre, biografia, habilidades) VALUES
 (1, 'Gabriel', 'Pérez', '1998-05-20', 'gabriel.perez@ejemplo.com', 'Educación', 10, 
 'Interesado en metodologías de aprendizaje activo y pedagogía moderna.',
@@ -75,7 +75,6 @@ DELIMITER $$
 
 CREATE PROCEDURE sp_estadisticas_visitantes()
 BEGIN
-
     SELECT COUNT(*) INTO @total FROM visitantes;
 
     SELECT COUNT(*) INTO @dentro FROM visitantes WHERE salida_registrada = FALSE;

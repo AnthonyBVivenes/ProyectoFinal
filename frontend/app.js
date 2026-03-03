@@ -248,52 +248,53 @@ function construirDetalleHTML(est) {
         <div class="historial-titulo">
           <h3>${nombreCompleto}</h3>
         </div>
+        <button onclick="editarEstudiante(${est.id})" class="btn-editar-estudiante" title="Editar estudiante">Editar</button>
       </div>
       
-      <div class="historial-datos">
+      <div class="historial-datos" id="datos-estudiante-${est.id}">
         <div class="dato-card">
-          <span class="dato-label">📄 Biografía</span>
+          <span class="dato-label">Biografía</span>
           <p class="dato-value">${biografia}</p>
         </div>
         
         ${est.email ? `
         <div class="dato-card">
-          <span class="dato-label">📧 Email</span>
+          <span class="dato-label">Email</span>
           <p class="dato-value">${est.email}</p>
         </div>
         ` : ''}
         
         ${est.carrera ? `
         <div class="dato-card">
-          <span class="dato-label">📚 Carrera</span>
+          <span class="dato-label">Carrera</span>
           <p class="dato-value">${est.carrera}</p>
         </div>
         ` : ''}
         
         ${est.semestre ? `
         <div class="dato-card">
-          <span class="dato-label">📅 Semestre</span>
+          <span class="dato-label">Semestre</span>
           <p class="dato-value">${est.semestre}</p>
         </div>
         ` : ''}
         
         ${est.fecha_nacimiento ? `
         <div class="dato-card">
-          <span class="dato-label">🎂 Fecha de Nacimiento</span>
+          <span class="dato-label">Fecha de Nacimiento</span>
           <p class="dato-value">${est.fecha_nacimiento}</p>
         </div>
         ` : ''}
         
         ${est.github_url ? `
         <div class="dato-card">
-          <span class="dato-label">🐙 GitHub</span>
+          <span class="dato-label">GitHub</span>
           <p class="dato-value"><a href="${est.github_url}" target="_blank" style="color: #667eea;">${est.github_url}</a></p>
         </div>
         ` : ''}
         
         ${est.linkedin_url ? `
         <div class="dato-card">
-          <span class="dato-label">💼 LinkedIn</span>
+          <span class="dato-label">LinkedIn</span>
           <p class="dato-value"><a href="${est.linkedin_url}" target="_blank" style="color: #667eea;">${est.linkedin_url}</a></p>
         </div>
         ` : ''}
@@ -301,12 +302,18 @@ function construirDetalleHTML(est) {
       
       ${habilidades.length > 0 ? `
         <div class="historial-habilidades">
-          <h4>🛠️ Habilidades</h4>
+          <h4>Habilidades</h4>
           <div class="habilidades-list">
             ${habilidades.map(h => `<span class="habilidad-tag">${h}</span>`).join('')}
           </div>
         </div>
       ` : ''}
+
+      <div class="acciones-estudiante">
+        <button onclick="eliminarEstudiante(${est.id}, '${nombreCompleto.replace(/'/g, "\\'")}')" class="btn-eliminar-estudiante">
+          🗑️ Eliminar Estudiante
+        </button>
+      </div>
     </div>
   `;
   
@@ -319,8 +326,145 @@ function volverALista() {
   document.getElementById('detalle-estudiante').style.display = 'none';
 }
 
-// Cargar datos al iniciar
+// Editar estudiante - muestra formulario de edición
+function editarEstudiante(id) {
+  const listaContainer = document.getElementById('lista-estudiantes');
+  const estudiantes = JSON.parse(listaContainer.dataset.estudiantes || '[]');
+  const est = estudiantes.find(e => e.id == id);
+  
+  if (!est) return;
+  
+  const datosContainer = document.getElementById(`datos-estudiante-${id}`);
+  
+  const formHTML = `
+    <form id="form-editar-estudiante-${id}" onsubmit="guardarEstudiante(event, ${id})">
+      <div class="dato-card">
+        <span class="dato-label">Biografía</span>
+        <textarea name="biografia" class="input-editar" rows="3" required>${est.biografia || est.bio || ''}</textarea>
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">Nombre</span>
+        <input type="text" name="nombre" class="input-editar" value="${est.nombre || ''}" required>
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">Apellido</span>
+        <input type="text" name="apellido" class="input-editar" value="${est.apellido || ''}" required>
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">Email</span>
+        <input type="email" name="email" class="input-editar" value="${est.email || ''}">
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">Carrera</span>
+        <input type="text" name="carrera" class="input-editar" value="${est.carrera || ''}">
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">Semestre</span>
+        <input type="number" name="semestre" class="input-editar" value="${est.semestre || ''}" min="1" max="12">
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">Habilidades</span>
+        <input type="text" name="habilidades" class="input-editar" value="${est.habilidades || ''}" placeholder="Separadas por comas">
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">GitHub URL</span>
+        <input type="url" name="github_url" class="input-editar" value="${est.github_url || ''}">
+      </div>
+      
+      <div class="dato-card">
+        <span class="dato-label">LinkedIn URL</span>
+        <input type="url" name="linkedin_url" class="input-editar" value="${est.linkedin_url || ''}">
+      </div>
+      
+      <div class="botones-edicion">
+        <button type="submit" class="btn-guardar">Guardar Cambios</button>
+        <button type="button" onclick="cancelarEdicion(${id})" class="btn-cancelar-edicion">Cancelar</button>
+      </div>
+    </form>
+  `;
+  
+  datosContainer.dataset.originalHTML = datosContainer.innerHTML;
+  datosContainer.innerHTML = formHTML;
+  
+  // Ocultar botón de editar durante la edición
+  document.querySelector('.btn-editar-estudiante').style.display = 'none';
+}
+
+// Cancelar edición
+function cancelarEdicion(id) {
+  const datosContainer = document.getElementById(`datos-estudiante-${id}`);
+  const listaContainer = document.getElementById('lista-estudiantes');
+  const estudiantes = JSON.parse(listaContainer.dataset.estudiantes || '[]');
+  const est = estudiantes.find(e => e.id == id);
+  
+  // Restaurar vista original
+  const detalleHTML = construirDetalleHTML(est);
+  document.getElementById('detalle-contenido').innerHTML = detalleHTML;
+}
+
+// Guardar cambios del estudiante
+function guardarEstudiante(event, id) {
+  event.preventDefault();
+  
+  const form = document.getElementById(`form-editar-estudiante-${id}`);
+  const formData = new FormData(form);
+  formData.append('action', 'editar_estudiante');
+  formData.append('id', id);
+  
+  fetch("", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        mostrarAlerta(data.message, "success");
+        // Recargar página para mostrar cambios actualizados
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        mostrarAlerta(data.message, "error");
+      }
+    })
+    .catch((error) => {
+      mostrarAlerta("Error al guardar los cambios", "error");
+    });
+}
+
+// Eliminar estudiante
+function eliminarEstudiante(id, nombre) {
+  if (!confirm(`¿Está seguro de que desea eliminar al estudiante "${nombre}"?\n\nEsta acción no se puede deshacer.`)) {
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('action', 'eliminar_estudiante');
+  formData.append('id', id);
+  
+  fetch("", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        mostrarAlerta(data.message, "success");
+        // Recargar página para actualizar la lista
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        mostrarAlerta(data.message, "error");
+      }
+    })
+    .catch((error) => {
+      mostrarAlerta("Error al eliminar el estudiante", "error");
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-  // Agregar data attribute con los estudiantes al contenedor
-  // Esto se hace desde PHP
 });

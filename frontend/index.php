@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 
 $host = getenv('DB_HOST');
 $db   = getenv('DB_NAME');
@@ -11,10 +12,11 @@ $port = getenv('DB_PORT');
 
 
 try {
-    $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+    $dsn = "mysql:host=$host;port=$port;dbname=$db";
     $pdo = new PDO($dsn, $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
     ]);
 } catch (PDOException $e) {
     die("<h3>Error de conexión: " . htmlspecialchars($e->getMessage()) . "</h3>");
@@ -112,6 +114,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
             }
             exit;
+
+        case 'editar_estudiante':
+            if (!isset($_POST['id'])) {
+                echo json_encode(['success' => false, 'message' => 'ID requerido']);
+                exit;
+            }
+
+            try {
+                $sql = "UPDATE estudiante SET 
+                    nombre = :nombre,
+                    apellido = :apellido,
+                    biografia = :biografia,
+                    carrera = :carrera,
+                    semestre = :semestre,
+                    email = :email,
+                    habilidades = :habilidades,
+                    github_url = :github_url,
+                    linkedin_url = :linkedin_url
+                    WHERE id = :id";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    ':id' => $_POST['id'],
+                    ':nombre' => $_POST['nombre'] ?? '',
+                    ':apellido' => $_POST['apellido'] ?? '',
+                    ':biografia' => $_POST['biografia'] ?? '',
+                    ':carrera' => $_POST['carrera'] ?? '',
+                    ':semestre' => $_POST['semestre'] ?? null,
+                    ':email' => $_POST['email'] ?? '',
+                    ':habilidades' => $_POST['habilidades'] ?? '',
+                    ':github_url' => $_POST['github_url'] ?? '',
+                    ':linkedin_url' => $_POST['linkedin_url'] ?? ''
+                ]);
+                echo json_encode(['success' => true, 'message' => 'Estudiante actualizado correctamente']);
+            } catch (PDOException $e) {
+                echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            }
+            exit;
+
+        case 'eliminar_estudiante':
+            if (!isset($_POST['id'])) {
+                echo json_encode(['success' => false, 'message' => 'ID requerido']);
+                exit;
+            }
+
+            try {
+                $sql = "DELETE FROM estudiante WHERE id = :id";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([':id' => $_POST['id']]);
+                echo json_encode(['success' => true, 'message' => 'Estudiante eliminado correctamente']);
+            } catch (PDOException $e) {
+                echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            }
+            exit;
     }
 }
 
@@ -152,6 +207,7 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Visitantes al Campus</title>
 
@@ -198,11 +254,11 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
             <?php else: ?>
                 <div class="estudiante-info">
                     <div class="foto-estudiante" style="background: #667eea; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
-                        👤
+                        FOTO
                     </div>
                     <div class="info-text">
                         <h2>Estudiante:</h2>
-                        <p>Información del estudiante no disponible(En desarrollo).</p>
+                        <p>Información del estudiante</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -316,7 +372,7 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
     <div id="modal-historial" class="modal">
         <div class="modal-content modal-historial-content">
             <span class="close" onclick="cerrarModalHistorial()">&times;</span>
-            <h2>📋 Historial de Estudiantes</h2>
+            <h2>Historial de Estudiantes</h2>
             
             <!-- Vista de Lista de Estudiantes -->
             <div id="lista-estudiantes" class="lista-estudiantes-container" data-estudiantes='<?php echo htmlspecialchars(json_encode($estudiantes), ENT_QUOTES, 'UTF-8'); ?>'>
