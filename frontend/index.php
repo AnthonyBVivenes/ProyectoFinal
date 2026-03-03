@@ -244,51 +244,12 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
         </div>
 
         <div class="landing-section">
-            <?php if ($estudiante): ?>
-                <div class="estudiante-info">
-                    <?php if (!empty($estudiante['foto'])): ?>
-                        <img src="<?php echo htmlspecialchars($estudiante['foto']); ?>"
-                            alt="Foto del estudiante" class="foto-estudiante">
-                    <?php else: ?>
-                        <div class="foto-estudiante" style="background: #667eea; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
-                            Foto
-                        </div>
-                    <?php endif; ?>
-                    <div class="info-text">
-                        <h2><?php echo htmlspecialchars($estudiante['nombre'] ?? 'Estudiante'); ?></h2>
-                        <p><?php echo htmlspecialchars($estudiante['bio'] ?? 'Estudiante de desarrollo web con experiencia en PHP, MySQL y Docker.'); ?></p>
-                        <?php if (!empty($estudiante['habilidades'])): ?>
-                            <div class="habilidades">
-                                <h3>Habilidades:</h3>
-                                <?php
-                                $habilidades = is_string($estudiante['habilidades'])
-                                    ? explode(',', $estudiante['habilidades'])
-                                    : (is_array($estudiante['habilidades']) ? $estudiante['habilidades'] : []);
-                                foreach ($habilidades as $habilidad):
-                                ?>
-                                    <span class="tag"><?php echo htmlspecialchars(trim($habilidad)); ?></span>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            <?php else: ?>
-                <div class="estudiante-info">
-                    <div class="foto-estudiante" style="background: #667eea; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
-                        Foto
-                    </div>
-                    <div class="info-text">
-                        <h2>Estudiante:</h2>
-                        <p>Información del estudiante</p>
-                    </div>
-                </div>
-            <?php endif; ?>
         </div>
 
         <div class="report-section">
             <div class="report-header">
                 <h2>Reporte</h2>
-                <button onclick="abrirHistorial()" class="btn btn-primary btn-historial">Historial</button>
+                <button onclick="abrirHistorial()" class="btn btn-primary btn-historial">Biografías</button>
             </div>
             <?php if ($reporteContenido): ?>
                 <pre class="report-content"><?php echo htmlspecialchars($reporteContenido); ?></pre>
@@ -393,7 +354,7 @@ if (file_exists($reportePath) && is_readable($reportePath)) {
     <div id="modal-historial" class="modal">
         <div class="modal-content modal-historial-content">
             <span class="close" onclick="cerrarModalHistorial()">&times;</span>
-            <h2>Historial de Estudiantes</h2>
+            <h2>Biografías de Estudiantes</h2>
             
             <!-- Vista de Lista de Estudiantes -->
             <div id="lista-estudiantes" class="lista-estudiantes-container" data-estudiantes='<?php echo htmlspecialchars(json_encode($estudiantes), ENT_QUOTES, 'UTF-8'); ?>'>
